@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Directory</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card mt-5">
+          <div class="card-body">
+            <h1 class="text-center mb-4">Employee Directory</h1>
+            <div class="form-group">
+              <select class="form-control" id="employee-dropdown"></select>
+            </div>
+            <div id="employee-details"></div>
+            <div id="employee-details-btn">
+                <button id="view-details-btn" class="btn btn-primary" style="display: none;">View Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      var directoryData = {{ directory_records|tojson }};
+      var employees = directoryData.individuals;
+      var dropdown = $('#employee-dropdown');
+
+      // Add an empty option to the dropdown
+      dropdown.append('<option value="">Select an employee</option>');
+
+      // Populate the dropdown with employees
+      $.each(employees, function(index, employee) {
+        var fullName = employee.last_name + ', ' + employee.first_name + ' ' + employee.middle_name;
+        var option = $('<option>')
+          .val(employee.id)
+          .text(fullName)
+          .data('employee', employee);
+        dropdown.append(option);
+      });
+
+      // Handle change event for the dropdown
+      dropdown.change(function() {
+        var selectedEmployeeId = $(this).val();
+        var selectedEmployee = $(this).find('option:selected').data('employee');
+        if (selectedEmployeeId) {
+          displayEmployeeDetails(selectedEmployee);
+        } else {
+          $('#employee-details').empty();
+          $('#view-details-btn').hide();
+        }
+      });
+
+      function displayEmployeeDetails(employee) {
+        var detailsHtml = '<h4>Employee Details</h4>';
+        detailsHtml += '<p><strong>Name:</strong> ' + employee.first_name + ' ' + employee.middle_name + ' ' + employee.last_name + '</p>';
+        detailsHtml += '<p><strong>Manager ID:</strong> ' + employee.manager.id + '</p>';
+        detailsHtml += '<p><strong>Department:</strong> ' + employee.department.name + '</p>';
+        detailsHtml += '<p><strong>Active:</strong> ' + employee.is_active + '</p>';
+        $('#employee-details').html(detailsHtml);
+        $('#view-details-btn').show();
+      }
+
+      // Handle click event for the "View Details" button
+      $('#view-details-btn').click(function() {
+        var selectedEmployeeId = $('#employee-dropdown').val();
+        var provider = '{{ provider }}'; 
+        if (selectedEmployeeId) {
+          var url = '/company/' + provider + '/employee_details/' + selectedEmployeeId;
+          window.location.href = url;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

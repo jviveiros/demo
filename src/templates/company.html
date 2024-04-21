@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Details</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <h1 class="text-center mb-4">Company Details</h1>
+                        <div class="text-center mb-4">
+                        <a href="{{ url_for('retrieve_directory', provider=provider)}}">
+                            <button class="btn btn-primary">Company Directory</button>
+                        </a>
+                        </div>
+                        <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                              <tr>
+                                <th scope="row">ID</th>
+                                <td>{{ company_record['id'] }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Legal Name</th>
+                                <td>{{ company_record['legal_name'] }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Entity</th>
+                                <td>
+                                  Type: {{ company_record['entity']['type'] }}<br>
+                                  Subtype: {{ company_record['entity']['subtype'] }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th scope="row">EIN</th>
+                                <td>{{ company_record['ein'] }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Primary Email</th>
+                                <td>{{ company_record['primary_email'] }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Primary Phone Number</th>
+                                <td>{{ company_record['primary_phone_number'] }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Departments</th>
+                                <td>
+                                  <table class="table table-bordered table-sm">
+                                    <thead>
+                                      <tr>
+                                        <th>Name</th>
+                                        <th>Parent</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for department in company_record['departments'] %}
+                                        <tr>
+                                          <td>{{ department['name'] }}</td>
+                                          <td>{{ department['parent']['name'] }}</td>
+                                        </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Locations</th>
+                                <td>
+                                  <table class="table table-bordered table-sm">
+                                    <thead>
+                                      <tr>
+                                        <th>Line 1</th>
+                                        <th>Line 2</th>
+                                        <th>City</th>
+                                        <th>State</th>
+                                        <th>Postal Code</th>
+                                        <th>Country</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for location in company_record['locations'] %}
+                                        <tr>
+                                          <td>{{ location['line1'] }}</td>
+                                          <td>{{ location['line2'] }}</td>
+                                          <td>{{ location['city'] }}</td>
+                                          <td>{{ location['state'] }}</td>
+                                          <td>{{ location['postal_code'] }}</td>
+                                          <td>{{ location['country'] }}</td>
+                                        </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Accounts</th>
+                                <td>
+                                  <table class="table table-bordered table-sm">
+                                    <thead>
+                                      <tr>
+                                        <th>Institution Name</th>
+                                        <th>Account Name</th>
+                                        <th>Account Number</th>
+                                        <th>Account Type</th>
+                                        <th>Routing Number</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {% for account in company_record['accounts'] %}
+                                        <tr>
+                                          <td>{{ account['institution_name'] }}</td>
+                                          <td>{{ account['account_name'] }}</td>
+                                          <td>{{ account['account_number'] }}</td>
+                                          <td>{{ account['account_type'] }}</td>
+                                          <td>{{ account['routing_number'] }}</td>
+                                        </tr>
+                                      {% endfor %}
+                                    </tbody>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
