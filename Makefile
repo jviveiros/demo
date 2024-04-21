@@ -19,7 +19,7 @@ clean:
 	docker ps -a -q -f status=exited | xargs docker rm -v
 	@echo "Deleting dangling images..."
 	docker images -q -f dangling=true | xargs docker rmi
-	@echo "All clean 🛀"
+	@echo "Clean"
 
 restart:
 	@echo "make down => make up"

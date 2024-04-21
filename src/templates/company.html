@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Details</title>
+    <link rel="stylesheet" href="/static/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <h1 class="text-center mb-4">Company Details</h1>
+                        <div class="text-center mb-4">
+                        <form method="POST" action="{{ url_for('retrieve_directory', provider=provider) }}">
+                            <button class="btn btn-primary">Company Directory</button>
+                        </form>
+                        </div>
+                        <table class="table">
+                            <tbody>
+                                {% for key, value in company_record.items() %}
+                                <tr>
+                                    <th scope="row">{{ key }}</th>
+                                    <td>
+                                        {% if value is mapping %}
+                                        <table class="table table-sm ml-4">
+                                            <tbody>
+                                                {% for nested_key, nested_value in value.items() %}
+                                                <tr>
+                                                    <th scope="row">{{ nested_key }}</th>
+                                                    <td>{{ nested_value }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% else %}
+                                        {{ value }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
