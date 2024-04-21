@@ -1,10 +1,10 @@
-# demo
+# Demo
 
 ## Requirements
 - Docker
 - Everything else should just work...
 
-##Building the demo
+## Building the demo
 
 1. Using the Makfile run `make build`  this will run the docker-compose files to create the database container and the webapp container.
 2. Running `make up` will start the web app and database. 
