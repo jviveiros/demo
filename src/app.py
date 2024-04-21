@@ -53,7 +53,6 @@ def index():
 @app.route('/submit_provider', methods=['POST'])
 def submit_provider():
     selected_provider = request.form['option']
-    flash(f'Selected Provider: {selected_provider}')
     return redirect(url_for('company', provider=selected_provider))
 
 @app.route('/company/<provider>', methods=['GET'])
@@ -69,8 +68,7 @@ def company(provider):
         if response.status_code == 200:
             company_record = response.json()
         else:
-            print(f"Request failed with status code {response.status_code}")
-            return "Request failed"
+            return return_error()
     else:
         api_key = get_new_api_key(provider_record.finch_id)
         provider_record.finch_api_key = api_key
@@ -81,8 +79,7 @@ def company(provider):
         if response.status_code == 200:
             company_record = response.json()
         else:
-            print(f"Request failed with status code {response.status_code}")
-            return "Request failed"
+            return return_error()
     
     return render_template('company.html', company_record=company_record, provider=provider)
     
@@ -96,8 +93,7 @@ def retrieve_directory(provider):
         directory_records = response.json()
         return render_template('directory.html', directory_records=directory_records, provider=provider)
     else:
-        print(f"Request failed with status code {response.status_code}")
-        return "Request failed"
+        return return_error()
     
 @app.route('/company/<provider>/employee_details/<employee_id>', methods=['GET'])
 def retrieve_employee_details(provider, employee_id):
@@ -119,9 +115,15 @@ def retrieve_employee_details(provider, employee_id):
         return render_template('employee_details.html', ind_details=indivdual_records, emp_details=emp_records,
                                provider=provider)
     else:
-        return "Request failed"
+        return return_error()
 
+@app.route('/404', methods=['GET'])
+def return_404():
+    return render_template('404.html')
 
+@app.route('/error', methods=['GET'])
+def return_error():
+    return render_template('error.html')
 
 
 def get_new_api_key(provider):
