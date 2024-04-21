@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Details</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-5">Employee Details</h1>
+    
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Individual Details</h4>
+      </div>
+      <div class="card-body">
+            {% set body = ind_details['responses'][0]['body'] %}
+          <p><strong>ID:</strong> {{ body['id'] }}</p>
+          <p><strong>First Name:</strong> {{ body['first_name'] }}</p>
+          <p><strong>Middle Name:</strong> {{ body['middle_name'] }}</p>
+          <p><strong>Last Name:</strong> {{ body['last_name'] }}</p>
+          <p><strong>Preferred Name:</strong> {{ body['preferred_name'] or 'N/A' }}</p>
+          <p><strong>Date of Birth:</strong> {{ body['dob'] }}</p>
+          <p><strong>Emails:</strong></p>
+          <ul>
+            {% for email in body['emails'] %}
+              <li>{{ email['data'] }} ({{ email['type'] }})</li>
+            {% endfor %}
+          </ul>
+          <p><strong>Residence:</strong></p>
+          <ul>
+            <li>{{ body['residence']['line1'] }}</li>
+            <li>{{ body['residence']['line2'] }}</li>
+            <li>{{ body['residence']['city'] }}, {{ body['residence']['state'] }} {{ body['residence']['postal_code'] }}</li>
+            <li>{{ body['residence']['country'] }}</li>
+          </ul>
+      </div>
+    </div>
+    
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4>Employment Details</h4>
+      </div>
+      <div class="card-body">
+          {% set body = emp_details['responses'][0]['body'] %}
+          <p><strong>ID:</strong> {{ body.get('id', 'N/A') }}</p>
+          <p><strong>Title:</strong> {{ body['title'] }}</p>
+          <p><strong>Manager:</strong> {{ body['manager']['id'] or 'N/A' }}</p>
+          <p><strong>Employment Type:</strong> {{ body['employment']['type'] }}</p>
+          <p><strong>Employment Subtype:</strong> {{ body['employment']['subtype'] }}</p>
+          <p><strong>Department:</strong> {{ body['department']['name'] }}</p>
+          <p><strong>Start Date:</strong> {{ body['start_date'] }}</p>
+          <p><strong>End Date:</strong> {{ body['end_date'] or 'N/A' }}</p>
+          <p><strong>Is Active:</strong> {{ 'Yes' if body['is_active'] else 'No' }}</p>
+          <p><strong>Class Code:</strong> {{ body['class_code'] }}</p>
+          <p><strong>Location:</strong></p>
+          <ul>
+            <li>{{ body['location']['line1'] }}</li>
+            <li>{{ body['location']['line2'] }}</li>
+            <li>{{ body['location']['city'] }}, {{ body['location']['state'] }} {{ body['location']['postal_code'] }}</li>
+            <li>{{ body['location']['country'] }}</li>
+          </ul>
+          <p><strong>Income:</strong></p>
+          <ul>
+            <li>Unit: {{ body['income']['unit'] }}</li>
+            <li>Amount: {{ body['income']['amount'] }}</li>
+            <li>Currency: {{ body['income']['currency'] }}</li>
+            <li>Effective Date: {{ body['income']['effective_date'] }}</li>
+          </ul>
+      </div>
+    </div>
+    
+    <a href="{{ url_for('retrieve_directory', provider=provider) }}" class="btn btn-primary mt-3">Back to Employee Directory</a>
+  </div>
+</body>
+</html>

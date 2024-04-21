@@ -2,11 +2,18 @@ from flask import Flask, render_template
 from flask import flash, redirect, url_for, session, logging, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+
 from database import db_session
 from models import Provider, Company, Individual
 import requests
-from functools import wraps
 
+import json
+import os
+
+#load_dotenv()
+
+#EMPLOYEE_NUM = os.getenv('FINCH_API_EMPLOYEE_NUM')
 
 
 #create db
@@ -53,43 +60,67 @@ def submit_provider():
 def company(provider):
     provider_record = db_session.query(Provider).filter(Provider.name == provider).first()
     
+    if provider_record is None:
+        return "Provider not found"
+    
     if provider_record.finch_api_key is not None:
         response = requests.get(BASE_API + '/company', headers={"Authorization": "Bearer %s" % provider_record.finch_api_key,
-        "Content-Type": "application/json"})
+                                                                "Content-Type": "application/json"})
         if response.status_code == 200:
             company_record = response.json()
         else:
             print(f"Request failed with status code {response.status_code}")
-        return render_template('company.html', company_record=company_record)
-    
+            return "Request failed"
     else:
         api_key = get_new_api_key(provider_record.finch_id)
-        
-        #save api key to reuse if we keep db up
-        provider_record.finch_api_key =  api_key
+        provider_record.finch_api_key = api_key
         db_session.commit()
-
-        response = requests.get(BASE_API + '/company', headers={"Authorization": "Bearer %s" % api_key,
-        "Content-Type": "application/json"})
         
+        response = requests.get(BASE_API + '/company', headers={"Authorization": "Bearer %s" % api_key,
+                                                                "Content-Type": "application/json"})
         if response.status_code == 200:
             company_record = response.json()
         else:
             print(f"Request failed with status code {response.status_code}")
-        return render_template('company.html', company_record=company_record)
+            return "Request failed"
     
-@app.route('/company/<provider>/directory', methods=['POST','GET'])
+    return render_template('company.html', company_record=company_record, provider=provider)
+    
+@app.route('/company/<provider>/directory', methods=['GET'])
 def retrieve_directory(provider):
-    print(provider)
     api_key = db_session.query(Provider).filter(Provider.name == provider).first().finch_api_key
-    response = requests.get(BASE_API + '/directory', headers={"Authorization": "Bearer %s" % api_key, "Content-Type": "application/json"})
+    response = requests.get(BASE_API + '/directory', headers={"Authorization": "Bearer %s" % api_key, \
+                                                              "Content-Type": "application/json"})
 
     if response.status_code == 200:
         directory_records = response.json()
-        return render_template('directory.html', directory_records=directory_records)
+        return render_template('directory.html', directory_records=directory_records, provider=provider)
     else:
         print(f"Request failed with status code {response.status_code}")
         return "Request failed"
+    
+@app.route('/company/<provider>/employee_details/<employee_id>', methods=['GET'])
+def retrieve_employee_details(provider, employee_id):
+    api_key = db_session.query(Provider).filter(Provider.name == provider).first().finch_api_key
+    
+    individual_response = requests.post(BASE_API + '/individual',
+        headers={"Authorization": "Bearer %s" % api_key, "Content-Type": "application/json"},
+        json={"requests": [{"individual_id": employee_id}]}
+    )
+
+    emp_details_response = requests.post(BASE_API + '/employment',
+        headers={"Authorization": "Bearer %s" % api_key, "Content-Type": "application/json"},
+        json={"requests": [{"individual_id": employee_id}]}
+    )
+    if individual_response.status_code == 200 & emp_details_response.status_code == 200:
+        indivdual_records = individual_response.json()
+        emp_records = emp_details_response.json()
+        
+        return render_template('employee_details.html', ind_details=indivdual_records, emp_details=emp_records,
+                               provider=provider)
+    else:
+        return "Request failed"
+
 
 
 
