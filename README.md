@@ -1,6 +1,6 @@
 # Demo
 ## Requirements
-- Docker
+- Podman
 - Everything else should just work...
 Building the Demo
 1. Using the Makefile, run make build. This will run the docker-compose files to create the database container and the webapp container.
