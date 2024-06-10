@@ -18,4 +18,3 @@ Building the Demo
 1. Add authentication (this was initially planned but had to be left out).
 2. Commit responses to the database so that data can be persisted without relying on in-memory storage. This allows for periodic checks of data freshness using epoch timestamps.
 3. Add all relevant models, to the database for storing, reducing api calls made / prevent everything from being in memory only.
-4. Add support for updating and creating employee records through form fields, etc.
