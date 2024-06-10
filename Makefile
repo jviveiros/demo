@@ -1,24 +1,24 @@
 build:
-	docker-compose build
+	podman-compose build
 	@echo "All built 🏛"
 
 up:
-	docker-compose up
+	podman-compose up
 	@make logs
 
 .PHONY: logs
 logs:
-	docker-compose logs -f
+	podman-compose logs -f
 
 down:
-	docker-compose stop
+	podman-compose stop
 
 
 clean:
 	@echo "Deleting exited containers..."
-	docker ps -a -q -f status=exited | xargs docker rm -v
+	podman ps -a -q -f status=exited | xargs podman rm -v
 	@echo "Deleting dangling images..."
-	docker images -q -f dangling=true | xargs docker rmi
+	podman images -q -f dangling=true | xargs podman rmi
 	@echo "Clean"
 
 restart:
